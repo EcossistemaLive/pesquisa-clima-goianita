@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pesquisa de Clima — Casas Goianita</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyC_WjnHl_Q5kGWwE7BGYAS3pNoIN_2fsnw",
+      authDomain: "formulario-bni.firebaseapp.com",
+      projectId: "formulario-bni",
+      storageBucket: "formulario-bni.firebasestorage.app",
+      messagingSenderId: "797036906569",
+      appId: "1:797036906569:web:b9ecade2d87e816805d798"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    window.salvarNoFirestore = async (dados) => {
+      const docRef = await addDoc(collection(db, "pesquisa-clima-goianita"), {
+        ...dados,
+        dataEnvio: serverTimestamp(),
+        versao: "2026.03"
+      });
+      return docRef.id;
+    };
+  </script>
+  <style>
+    :root {
+      --goianita-dark: #030d17;
+      --terra-vermelha: #8B3E2F;
+      --verde-musgo: #4B5320;
+      --dourado: #C59331;
+      --areia: #D2C5B1;
+      --areia-light: #f0ebe3;
+      --cinza-medio: #6b7280;
+      --glass-bg: rgba(255,255,255,0.06);
+      --glass-border: rgba(197,147,49,0.2);
+      --radius: 2px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--goianita-dark);
+      color: var(--areia);
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .bg-texture {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 15% 20%, rgba(139,62,47,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 85% 70%, rgba(75,83,32,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 100% 100% at 50% 0%, rgba(197,147,49,0.04) 0%, transparent 50%);
+    }
+
+    /* ── HEADER ── */
+    .site-header {
+      position: relative; z-index: 10;
+      background: linear-gradient(135deg, rgba(3,13,23,0.98) 0%, rgba(10,20,35,0.98) 100%);
+      border-bottom: 1px solid var(--glass-border);
+      padding: 2.5rem 2rem;
+      text-align: center;
+    }
+
+    .confidential-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(75,83,32,0.25);
+      border: 1px solid rgba(75,83,32,0.5);
+      border-radius: var(--radius);
+      padding: 0.4rem 1rem;
+      font-size: 0.7rem;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #a3b564;
+      margin-bottom: 1.5rem;
+    }
+
+    .site-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.02em;
+      line-height: 1.2;
+    }
+
+    .site-header h1 span {
+      background: linear-gradient(135deg, var(--dourado), #e8c068);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .site-header .subtitle {
+      font-size: 0.95rem;
+      color: rgba(210,197,177,0.7);
+      margin-top: 0.75rem;
+      max-width: 560px;
+      margin-left: auto; margin-right: auto;
+    }
+
+    .art-deco-line {
+      display: flex; align-items: center; gap: 1rem;
+      max-width: 300px; margin: 1.5rem auto 0;
+    }
+    .art-deco-line::before, .art-deco-line::after {
+      content: ''; flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--dourado), transparent);
+    }
+    .art-deco-line i { color: var(--dourado); font-size: 0.7rem; }
+
+    /* ── AVISO DE CONFIDENCIALIDADE ── */
+    .aviso-confidencial {
+      position: relative; z-index: 5;
+      max-width: 780px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .aviso-box {
+      background: rgba(75,83,32,0.12);
+      border: 1px solid rgba(75,83,32,0.4);
+      border-left: 4px solid var(--verde-musgo);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      display: flex; gap: 1rem; align-items: flex-start;
+    }
+
+    .aviso-box i { color: #a3b564; font-size: 1.2rem; margin-top: 0.1rem; flex-shrink: 0; }
+
+    .aviso-box p {
+      font-size: 0.88rem;
+      color: rgba(210,197,177,0.85);
+      line-height: 1.6;
+    }
+
+    .aviso-box p strong { color: #a3b564; }
+
+    /* ── MAIN FORM CONTAINER ── */
+    .form-container {
+      position: relative; z-index: 5;
+      max-width: 780px;
+      margin: 0 auto 3rem;
+      padding: 0 1.5rem;
+    }
+
+    /* ── SEÇÕES ── */
+    .secao {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .secao.visible { opacity: 1; transform: translateY(0); }
+
+    .secao-header {
+      display: flex; align-items: center; gap: 1rem;
+      margin-bottom: 1.75rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .secao-icon {
+      width: 42px; height: 42px;
+      background: rgba(197,147,49,0.12);
+      border: 1px solid rgba(197,147,49,0.3);
+      border-radius: var(--radius);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--dourado);
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .secao-icon.verde { background: rgba(75,83,32,0.2); border-color: rgba(75,83,32,0.4); color: #a3b564; }
+    .secao-icon.vermelha { background: rgba(139,62,47,0.2); border-color: rgba(139,62,47,0.4); color: #c87860; }
+
+    .secao-titulo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .secao-numero {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--dourado);
+      opacity: 0.7;
+    }
+
+    /* ── GRUPOS DE QUESTÃO ── */
+    .questao-grupo {
+      margin-bottom: 1.75rem;
+    }
+
+    .questao-label {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--areia);
+      margin-bottom: 0.75rem;
+      display: block;
+      line-height: 1.5;
+    }
+
+    .questao-label .numero-q {
+      color: var(--dourado);
+      font-weight: 600;
+      margin-right: 0.35rem;
+    }
+
+    /* ── ESCALA 0-10 ── */
+    .escala-wrapper {
+      margin-top: 0.5rem;
+    }
+
+    .escala-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: rgba(210,197,177,0.5);
+      margin-bottom: 0.4rem;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .escala-btns {
+      display: flex;
+      gap: 0.3rem;
+      flex-wrap: wrap;
+    }
+
+    .escala-btn {
+      width: 38px; height: 38px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius);
+      color: rgba(210,197,177,0.6);
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .escala-btn:hover {
+      background: rgba(197,147,49,0.15);
+      border-color: rgba(197,147,49,0.4);
+      color: var(--dourado);
+    }
+
+    .escala-btn.active {
+      background: rgba(197,147,49,0.25);
+      border-color: var(--dourado);
+      color: var(--dourado);
+    }
+
+    /* cores para escala */
+    .escala-btn[data-val="0"].active, .escala-btn[data-val="1"].active, .escala-btn[data-val="2"].active { background: rgba(139,62,47,0.3); border-color: #c87860; color: #c87860; }
+    .escala-btn[data-val="3"].active, .escala-btn[data-val="4"].active { background: rgba(185,120,50,0.25); border-color: #c99240; color: #c99240; }
+    .escala-btn[data-val="5"].active, .escala-btn[data-val="6"].active { background: rgba(197,147,49,0.2); border-color: var(--dourado); color: var(--dourado); }
+    .escala-btn[data-val="7"].active, .escala-btn[data-val="8"].active { background: rgba(100,130,50,0.25); border-color: #8aaa40; color: #8aaa40; }
+    .escala-btn[data-val="9"].active, .escala-btn[data-val="10"].active { background: rgba(75,83,32,0.35); border-color: #a3b564; color: #a3b564; }
+
+    /* ── RADIO / CHECKBOX ── */
+    .opcoes-lista {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .opcao-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.65rem 0.9rem;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .opcao-item:hover {
+      background: rgba(197,147,49,0.08);
+      border-color: rgba(197,147,49,0.25);
+    }
+
+    .opcao-item input[type="radio"],
+    .opcao-item input[type="checkbox"] {
+      margin-top: 0.1rem;
+      accent-color: var(--dourado);
+      flex-shrink: 0;
+    }
+
+    .opcao-item label {
+      font-size: 0.88rem;
+      color: rgba(210,197,177,0.85);
+      cursor: pointer;
+      line-height: 1.4;
+    }
+
+    .opcoes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.5rem;
+    }
+
+    /* ── TEXTAREA / INPUT ── */
+    textarea, input[type="text"] {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: var(--radius);
+      color: var(--areia);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem;
+      padding: 0.75rem 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+      resize: vertical;
+    }
+
+    textarea:focus, input[type="text"]:focus {
+      border-color: rgba(197,147,49,0.5);
+    }
+
+    textarea::placeholder, input::placeholder {
+      color: rgba(210,197,177,0.3);
+    }
+
+    /* ── TABELA AVALIAÇÃO ── */
+    .tabela-avaliacao {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    .tabela-avaliacao th {
+      padding: 0.6rem 0.75rem;
+      text-align: center;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(210,197,177,0.5);
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .tabela-avaliacao th.criterio-col { text-align: left; }
+
+    .tabela-avaliacao td {
+      padding: 0.75rem 0.75rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      color: rgba(210,197,177,0.85);
+    }
+
+    .tabela-avaliacao td.criterio-col { font-size: 0.88rem; }
+
+    .tabela-avaliacao td.nota-col { text-align: center; }
+
+    .tabela-avaliacao tr:last-child td { border-bottom: none; }
+    .tabela-avaliacao tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .radio-nota {
+      display: flex; gap: 0.4rem; justify-content: center;
+    }
+
+    .radio-nota-btn {
+      width: 30px; height: 30px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      color: rgba(210,197,177,0.5);
+      font-size: 0.75rem;
+      font-family: 'Poppins', sans-serif;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .radio-nota-btn:hover { background: rgba(197,147,49,0.15); border-color: rgba(197,147,49,0.4); color: var(--dourado); }
+    .radio-nota-btn.active { background: rgba(197,147,49,0.25); border-color: var(--dourado); color: var(--dourado); }
+
+    /* ── BARRA DE PROGRESSO ── */
+    .progress-bar-wrapper {
+      position: sticky;
+      top: 0; z-index: 100;
+      background: rgba(3,13,23,0.95);
+      border-bottom: 1px solid var(--glass-border);
+      padding: 0.6rem 1.5rem;
+      display: flex; align-items: center; gap: 1rem;
+    }
+
+    .progress-label {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(210,197,177,0.5);
+      white-space: nowrap;
+    }
+
+    .progress-bar {
+      flex: 1;
+      height: 4px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--terra-vermelha), var(--dourado), var(--verde-musgo));
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    .progress-pct {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--dourado);
+      min-width: 35px;
+      text-align: right;
+    }
+
+    /* ── BOTÃO ENVIAR ── */
+    .btn-enviar-wrapper {
+      text-align: center;
+      margin-top: 2rem;
+    }
+
+    .btn-enviar {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: linear-gradient(135deg, var(--dourado), #e8c068);
+      color: var(--goianita-dark);
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 1rem 2.5rem;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-enviar:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(197,147,49,0.35);
+    }
+
+    /* ── TELA DE OBRIGADO ── */
+    .obrigado-screen {
+      display: none;
+      text-align: center;
+      padding: 4rem 2rem;
+    }
+
+    .obrigado-screen.visible { display: block; }
+
+    .obrigado-icon {
+      width: 80px; height: 80px;
+      background: rgba(75,83,32,0.2);
+      border: 2px solid var(--verde-musgo);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.5rem;
+      color: #a3b564;
+      margin: 0 auto 1.5rem;
+    }
+
+    .obrigado-screen h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: #fff;
+      margin-bottom: 0.75rem;
+    }
+
+    .obrigado-screen p {
+      color: rgba(210,197,177,0.7);
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    /* ── SEPARADOR ── */
+    .separador {
+      display: flex; align-items: center; gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .separador::before, .separador::after {
+      content: ''; flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(197,147,49,0.25), transparent);
+    }
+    .separador span { font-size: 0.7rem; color: rgba(197,147,49,0.4); letter-spacing: 0.1em; }
+
+    /* ── FOOTER ── */
+    .site-footer {
+      position: relative; z-index: 5;
+      border-top: 1px solid var(--glass-border);
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 0.78rem;
+      color: rgba(210,197,177,0.3);
+    }
+
+    @media (max-width: 600px) {
+      .escala-btns { gap: 0.2rem; }
+      .escala-btn { width: 32px; height: 32px; font-size: 0.78rem; }
+      .secao { padding: 1.25rem; }
+      .tabela-avaliacao { font-size: 0.78rem; }
+      .radio-nota-btn { width: 25px; height: 25px; font-size: 0.68rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg-texture"></div>
+
+<!-- BARRA DE PROGRESSO -->
+<div class="progress-bar-wrapper">
+  <span class="progress-label">Progresso</span>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <span class="progress-pct" id="progressPct">0%</span>
+</div>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="confidential-badge">
+    <i class="fa-solid fa-shield-halved"></i>
+    CONFIDENCIAL — Respostas anônimas
+  </div>
+  <h1>Pesquisa de <span>Clima e Capacitação</span></h1>
+  <p class="subtitle">Sua opinião é fundamental para construirmos juntos um ambiente de trabalho melhor e mais justo.</p>
+  <div class="art-deco-line"><i class="fa-solid fa-diamond"></i></div>
+</header>
+
+<!-- AVISO CONFIDENCIAL -->
+<div class="aviso-confidencial">
+  <div class="aviso-box">
+    <i class="fa-solid fa-lock"></i>
+    <p><strong>Garantia de anonimato:</strong> Esta pesquisa é completamente anônima. Suas respostas <strong>não serão divulgadas individualmente</strong> para os proprietários ou gestores. Os resultados serão apresentados de forma consolidada, apenas como médias e tendências gerais, para orientar o programa de treinamento.</p>
+  </div>
+</div>
+
+<!-- FORMULÁRIO PRINCIPAL -->
+<div class="form-container" id="formContainer">
+
+  <!-- ──────────────────────────────────────── -->
+  <!-- SEÇÃO 1 — IDENTIFICAÇÃO (OPCIONAL) -->
+  <!-- ──────────────────────────────────────── -->
+  <div class="secao" id="s1">
+    <div class="secao-header">
+      <div class="secao-icon"><i class="fa-solid fa-user-circle"></i></div>
+      <div>
+        <div class="secao-numero">Seção 01</div>
+        <div class="secao-titulo">Identificação (Opcional)</div>
+      </div>
+    </div>
+
+    <div class="questao-grupo">
+      <label class="questao-label"><span class="numero-q">1.</span> Qual é a sua unidade de trabalho?</label>
+      <div class="opcoes-lista">
+        <label class="opcao-item"><input type="radio" name="q1_unidade" value="135"> <label>Loja 135</label></label>
+        <label class="opcao-item"><input type="radio" name="q1_unidade" value="T4"> <label>Loja T4</label></label>
+        <label class="opcao-item"><input type="radio" name="q1_unidade" value="85"> <label>Loja 85</label></label>
+        <label class="opcao-item"><input type="radio" name="q1_unidade" value="varias"> <label>Atuo em mais de uma unidade</label></label>
+        <label class="opcao-item"><input type="radio" name="q1_unidade" value="prefiro"> <label>Prefiro não informar</label></label>
+      </div>
+    </div>
+
+    <div class="questao-grupo">
+      <label class="questao-label"><span class="numero-q">2.</span> Há quanto tempo você trabalha nas Casas Goianita?</label>
+      <div class="opcoes-lista">
+        <label class="opcao-item"><input type="radio" name="q2_tempo" value="menos6"> <label>Menos de 6 meses</label></label>
+        <label class="opcao-item"><input type="radio" name="q2_tempo" value="6a12"> <label>De 6 meses a 1 ano</label></label>
+        <label class="opcao-item"><input type="radio" name="q2_tempo" value="1a3"> <label>De 1 a 3 anos</label></label>
+        <label class="opcao-item"><input type="radio" name="q2_tempo" value="mais3"> <label>Mais de 3 anos</label></label>
+      </div>
+    </div>
+
+    <div class="questao-grupo">
+      <label class="questao-label"><span class="numero-q">3.</span> Qual é o seu cargo principal?</label>
+      <div class="opcoes-lista">
+        <div class="opcoes-grid">
+          <label class="opcao-item"><input type="radio" name="q3_cargo" value="vendedor"> <label>Vendedor(a)</label></label>
+          <label class="opcao-item"><input type="radio" name="q3_cargo" value="caixa"> <label>Operador(a) de Caixa</label></label>
+          <label class="opcao-item"><input type="radio" name="q3_cargo" value="expedicao"> <label>Expedição / Estoque</label></label>
+          <label class="opcao-item"><input type="radio" name="q3_cargo" value="financeiro"> <label>Financeiro / Administrativo</label></label>
+          <label class="opcao-item"><input type="radio" name="q3_cargo" value="gerente"> <label>Gerente / Supervisor(a)</label></label>
+          <label class="opcao-item"><input type="radio" name="q3_cargo" value="outro"> <label>Outro</label></label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──────────────────────────────────────── -->
+  <!-- SEÇÃO 2 — CLIMA ORGANIZACIONAL -->
+  <!-- ──────────────────────────────────────── -->
+  <div class="secao" id="s2">
+    <div class="secao-header">
+      <div class="secao-icon verde"><i class="fa-solid fa-heart-pulse"></i></div>
+      <div>
+        <div class="secao-numero">Seção 02</div>
+        <div class="secao-titulo">Clima e Ambiente de Trabalho</div>
+      </div>
+    </div>
+
+    <div class="questao-grupo">
+      <label class="questao-label"><span class="numero-q">4.</span> De modo geral, como você avalia o clima de trabalho na sua unidade? <em style="color:rgba(197,147,49,0.7)">(0 = muito ruim | 10 = excelente)</em></label>
+      <div class="escala-wrapper">
+        <div class="escala-labels"><span>Muito ruim</span><span>Excelente</span></div>
+        <div class="escala-btns" data-name="q4_clima">
+          <button type="button" class="escala-btn" data-val="0">0</button>
+          <button type="button" class="escala-btn" data-val="1">1</button>
+          <button type="button" class="escala-btn" data-val="2">2</button>
+          <button type="button" class="escala-btn" data-val="3">3</button>
+          <button type="button" class="escala-btn" data-val="4">4</button>
+          <button type="button" class="escala-btn" data-val="5">5</button>
+          <button type="button" class="escala-btn" data-val="6">6</button>
+          <button type="button" class="escala-btn" data-val="7">7</button>
+          <button type="button" class="escala-btn" data-val="8">8</button>
+          <button type="button" class="escala-btn" data-val="9">9</button>
+          <button type="button" class="escala-btn" data-val="10">10</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="questao-grupo">
+      <label class="questao-label"><span class="numero-q">5.</span> Você se sente respeitado(a) pelos seus colegas de trabalho?</label>
+      <div class="opcoes-lista">
+        <label class="opcao-item"><input type="radio" name="q5_respeito" value="sempre"> <label>Sempre</label></label>
+        <label class="opcao-item"><input type="radio" name="q5_respeito" value="quase"> <label>Quase sempre</label></label>
+        <label class="opcao-item"><input type="radio" name="q5_respeito" value="as_vezes"> <label>Às vezes</label></label>
+        <label class="opcao-item"><input type="radio" name="q5_respeito" value="raramente"> <label>Raramente</label></label>
+        <label class="opcao-item"><input type="radio" name="q5_respeito" value="nao"> <label>Não me sinto respeitado(a)</label></label>
+      </div>
+    </div>
+
+    <div class="questao-grupo">
+      <label class="questao-label"><span class="numero-q">6.</span> Você se sente à vontade para dar sugestões ou questionar processos sem medo de represálias?</label>
+      <div class="opcoes-lista">
+        <label class="opcao-item"><input type="radio" name="q6_sugestao" value="sim"> <label>Sim, completamente</label></label>
+        <label class="opcao-item"><input type="radio" name="q6_sugestao" value="parcial"> <label>Às vezes, depende do assunto</label></label>
+        <label class="opcao-item"><input type="radio" name="q6_sugestao" value="nao"> <label>Não, prefiro não arriscar</label></label>
+      </div>
+    </div>
+
+    <div class="questao-grupo">
+      <label class="questao-label"><span class="numero-q">7.</span> Quando há um problema na loja, como ele costuma ser resolvido?</label>
+      <div class="opcoes-lista">
+        <label class="opcao-item"><input type="radio" name="q7_problema" value="rapid"> <label>É resolvido rapidamente e com clareza</label></label>
+        <label class="opcao-item"><input type="radio" name="q7_problema" value="demora"> <label>Demora, mas acaba sendo resolvido</label></label>
+        <label class="opcao-item"><input type="radio" name="q7_problema" value="engaveta"> <label>Na maioria das vezes fica sem resolução</label></label>
+        <label class="opcao-item"><input type="radio" name="q7_problema" value="fofoca"> <label>Vira assunto de corredor antes de ser tratado</label></label>
+      </div>
+    </div>
+
+    <div class="questao-grupo">
+      <label class="questao-label"><span class="numero-q">8.</span> Você acredita que as informações da empresa chegam de forma clara e direta para a sua equipe?</label>
+      <div class="opcoes-lista">
+        <label class="opcao-item"><input type="radio" name="q8_comunicacao" value="sim"> <label>Sim, a comunicação é clara</label></label>
+        <label class="opcao-item"><input type="radio" name="q8_comunicacao" value="parcial"> <label>Parcialmente — às vezes há ruído</label></label>
+        <label class="opcao-item"><input type="radio" name="q8_comunicacao" value="nao"> <label>Não — fico sabendo das coisas por acaso</label></label>
+      </div>
+    </div>
+
+    <div class="questao-grupo">
+      <label class="questao-label"><span class="numero-q">9.</span> Como você descreveria a cooperação entre os membros da sua equipe?</label>
+      <div class="opcoes-lista">
+        <label class="opcao-item"><input type="radio" name="q9_cooperacao" value="otima"> <label>Ótima — nos ajudamos sempre</label></label>
+        <label class="opcao-item"><input type="radio" name="q9_cooperacao" value="boa"> <label>Boa — mas há margem para melhorar</label></label>
+        <label class="opcao-item"><input type="radio" name="q9_cooperacao" value="regular"> <label>Regular — cada um cuida do seu</label></label>
+        <label class="opcao-item"><input type="radio" name="q9_cooperacao" value="ruim"> <label>Ruim — há competição ou conflitos frequentes</label></label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──────────────────────────────────────── -->
+  <!-- SEÇÃO 3 — AVALIAÇÃO DA LIDERANÇA -->
+  <!-- ──────────────────────────────────────── -->
+  <div class="secao" id="s3">
+    <div class="secao-header">
+      <div class="secao-icon vermelha"><i class="fa-solid fa-star-half-stroke"></i></div>
+      <div>
+        <div class="secao-numero">Seção 03</div>
+        <div class="secao-titulo">Avaliação da Liderança</div>
+      </div>
+    </div>
+
+    <p style="font-size:0.83rem;color:rgba(210,197,177,0.55);margin-bottom:1.25rem;">Avalie seu gestor/supervisor imediato nos critérios abaixo. Use a escala de 1 a 5 (1 = Nunca | 5 = Sempre).</p>
+
+    <table class="tabela-avaliacao">
+      <thead>
+        <tr>
+          <th class="criterio-col">Critério</th>
+          <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th>
+        </tr>
+      </thead>
+      <tbody id="tabelaLideranca">
+        <!-- linhas geradas por JS -->
+      </tbody>
+    </table>
+
+    <div class="separador"><span>✦</span></div>
+
+    <div class="questao-grupo">
+      <label class="questao-label"><span class="numero-q">16.</span> O que você mais valoriza no estilo de liderança do seu gestor?</label>
+      <textarea name="q16_valoriza" rows="3" placeholder="Escreva livremente..."></textarea>
+    </div>
+
+    <div class="questao-grupo">
+      <label class="questao-label"><span class="numero-q">17.</span> O que você acha que poderia melhorar na gestão da sua equipe?</label>
+      <textarea name="q17_melhoria_gestao" rows="3" placeholder="Escreva livremente..."></textarea>
+    </div>
+  </div>
+
+  <!-- ──────────────────────────────────────── -->
+  <!-- SEÇÃO 4 — AUTO-AVALIAÇÃO DE COMPETÊNCIAS -->
+  <!-- ──────────────────────────────────────── -->
+  <div class="secao" id="s4">
+    <div class="secao-header">
+      <div class="secao-icon"><i class="fa-solid fa-chart-radar"></i></div>
+      <div>
+        <div class="secao-numero">Seção 04</div>
+        <div class="secao-titulo">Auto-Avaliação — Competências Técnicas</div>
+      </div>
+    </div>
+
+    <p style="font-size:0.83rem;color:rgba(210,197,177,0.55);margin-bottom:1.5rem;">Avalie seu próprio nível de conhecimento em cada área abaixo. Seja honesto(a) — não há resposta certa ou errada. Isso ajudará a montar um treinamento sob medida. <em style="color:rgba(197,147,49,0.6)">(0 = Não sei nada | 10 = Domino completamente)</em></p>
+
+    <!-- Conhecimento de Produto -->
+    <div class="questao-grupo">
+      <label class="questao-label"><span class="numero-q">18.</span> Conhecimento dos produtos que a loja vende (usos, diferenciais, preços)</label>
+      <div class="escala-wrapper">
+        <div class="escala-labels"><span>Não sei nada</span><span>Domino completamente</span></div>
+        <div class="escala-btns" data-name="q18_produto">
+          <button type="button" class="escala-btn" data-val="0">0</button><button type="button" class="escala-btn" data-val="1">1</button><button type="button" class="escala-btn" data-val="2">2</button><button type="button" class="escala-btn" data-val="3">3</button><button type="button" class="escala-btn" data-val="4">4</button><button type="button" class="escala-btn" data-val="5">5</button><button type="button" class="escala-btn" data-val="6">6</button><button type="button" class="escala-btn" data-val="7">7</button><button type="button" class="escala-btn" data-val="8">8</button><button type="button" class="escala-btn" data-val="9">9</button><button type="button" class="escala-btn" data-val="10">10</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Técnicas de venda -->
+    <div class="questao-grupo">
+      <label class="questao-label"><span class="numero-q">19.</span> Técnicas de venda (abordagem, apresentação, objeções, fechamento)</label>
+      <div class="escala-wrapper">
+        <div class="escala-labels"><span>Não sei nada</span><span>Domino completamente</span></div>
+        <div class="escala-btns" data-name="q19_venda">
+          <button type="button" class="escala-btn" data-val="0">0</button><button type="button" class="escala-btn" data-val="1">1</button><button type="button" class="escala-btn" data-val="2">2</button><button type="button" class="escala-btn" data-val="3">3</button><button type="button" class="escala-btn" data-val="4">4</button><button type="button" class="escala-btn" data-val="5">5</button><button type="button" class="escala-btn" data-val="6">6</button><button type="button" class="escala-btn" data-val="7">7</button><button type="button" class="escala-btn" data-val="8">8</button><button type="button" class="escala-btn" data-val="9">9</button><button type="button" class="escala-btn" data-val="10">10</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Atendimento ao cliente -->
+    <div class="questao-grupo">
+      <label class="questao-label"><span class="numero-q">20.</span> Atendimento ao cliente (comunicação, postura, resolução de conflitos)</label>
+      <div class="escala-wrapper">
+        <div class="escala-labels"><span>Não sei nada</span><span>Domino completamente</span></div>
+        <div class="escala-btns" data-name="q20_atendimento">
+          <button type="button" class="escala-btn" data-val="0">0</button><button type="button" class="escala-btn" data-val="1">1</button><button type="button" class="escala-btn" data-val="2">2</button><button type="button" class="escala-btn" data-val="3">3</button><button type="button" class="escala-btn" data-val="4">4</button><button type="button" class="escala-btn" data-val="5">5</button><button type="button" class="escala-btn" data-val="6">6</button><button type="button" class="escala-btn" data-val="7">7</button><button type="button" class="escala-btn" data-val="8">8</button><button type="button" class="escala-btn" data-val="9">9</button><button type="button" class="escala-btn" data-val="10">10</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sistema / ERP -->
+    <div class="questao-grupo">
+      <label class="questao-label"><span class="numero-q">21.</span> Uso do sistema da loja (emissão de venda, nota fiscal, CRM, registro de pagamento)</label>
+      <div class="escala-wrapper">
+        <div class="escala-labels"><span>Não sei nada</span><span>Domino completamente</span></div>
+        <div class="escala-btns" data-name="q21_sistema">
+          <button type="button" class="escala-btn" data-val="0">0</button><button type="button" class="escala-btn" data-val="1">1</button><button type="button" class="escala-btn" data-val="2">2</button><button type="button" class="escala-btn" data-val="3">3</button><button type="button" class="escala-btn" data-val="4">4</button><button type="button" class="escala-btn" data-val="5">5</button><button type="button" class="escala-btn" data-val="6">6</button><button type="button" class="escala-btn" data-val="7">7</button><button type="button" class="escala-btn" data-val="8">8</button><button type="button" class="escala-btn" data-val="9">9</button><button type="button" class="escala-btn" data-val="10">10</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Expedição / Logística -->
+    <div class="questao-grupo">
+      <label class="questao-label"><span class="numero-q">22.</span> Processos de expedição e estoque (embalagem, etiquetas, dimensões, marketplace)</label>
+      <div class="escala-wrapper">
+        <div class="escala-labels"><span>Não sei nada</span><span>Domino completamente</span></div>
+        <div class="escala-btns" data-name="q22_expedicao">
+          <button type="button" class="escala-btn" data-val="0">0</button><button type="button" class="escala-btn" data-val="1">1</button><button type="button" class="escala-btn" data-val="2">2</button><button type="button" class="escala-btn" data-val="3">3</button><button type="button" class="escala-btn" data-val="4">4</button><button type="button" class="escala-btn" data-val="5">5</button><button type="button" class="escala-btn" data-val="6">6</button><button type="button" class="escala-btn" data-val="7">7</button><button type="button" class="escala-btn" data-val="8">8</button><button type="button" class="escala-btn" data-val="9">9</button><button type="button" class="escala-btn" data-val="10">10</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vocabulário comercial -->
+    <div class="questao-grupo">
+      <label class="questao-label"><span class="numero-q">23.</span> Vocabulário e comunicação profissional (linguagem com cliente, postura na loja)</label>
+      <div class="escala-wrapper">
+        <div class="escala-labels"><span>Não sei nada</span><span>Domino completamente</span></div>
+        <div class="escala-btns" data-name="q23_vocabulario">
+          <button type="button" class="escala-btn" data-val="0">0</button><button type="button" class="escala-btn" data-val="1">1</button><button type="button" class="escala-btn" data-val="2">2</button><button type="button" class="escala-btn" data-val="3">3</button><button type="button" class="escala-btn" data-val="4">4</button><button type="button" class="escala-btn" data-val="5">5</button><button type="button" class="escala-btn" data-val="6">6</button><button type="button" class="escala-btn" data-val="7">7</button><button type="button" class="escala-btn" data-val="8">8</button><button type="button" class="escala-btn" data-val="9">9</button><button type="button" class="escala-btn" data-val="10">10</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="separador"><span>✦</span></div>
+
+    <div class="questao-grupo">
+      <label class="questao-label"><span class="numero-q">24.</span> Em qual dessas áreas você tem MAIS dificuldade hoje? (Marque até 2)</label>
+      <div class="opcoes-lista opcoes-grid">
+        <label class="opcao-item"><input type="checkbox" name="q24_dificuldade" value="produto"> <label>Conhecimento de produto</label></label>
+        <label class="opcao-item"><input type="checkbox" name="q24_dificuldade" value="venda"> <label>Técnicas de venda</label></label>
+        <label class="opcao-item"><input type="checkbox" name="q24_dificuldade" value="atendimento"> <label>Atendimento ao cliente</label></label>
+        <label class="opcao-item"><input type="checkbox" name="q24_dificuldade" value="sistema"> <label>Sistema / ERP</label></label>
+        <label class="opcao-item"><input type="checkbox" name="q24_dificuldade" value="expedicao"> <label>Expedição / Estoque</label></label>
+        <label class="opcao-item"><input type="checkbox" name="q24_dificuldade" value="vocabulario"> <label>Vocabulário comercial</label></label>
+        <label class="opcao-item"><input type="checkbox" name="q24_dificuldade" value="financeiro"> <label>Processos financeiros</label></label>
+        <label class="opcao-item"><input type="checkbox" name="q24_dificuldade" value="outro"> <label>Outro</label></label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──────────────────────────────────────── -->
+  <!-- SEÇÃO 5 — DISPOSIÇÃO PARA APRENDIZAGEM -->
+  <!-- ──────────────────────────────────────── -->
+  <div class="secao" id="s5">
+    <div class="secao-header">
+      <div class="secao-icon verde"><i class="fa-solid fa-graduation-cap"></i></div>
+      <div>
+        <div class="secao-numero">Seção 05</div>
+        <div class="secao-titulo">Disposição para Aprendizagem e Crescimento</div>
+      </div>
+    </div>
+
+    <div class="questao-grupo">
+      <label class="questao-label"><span class="numero-q">25.</span> De 0 a 10, qual é o seu interesse em participar de treinamentos e se desenvolver profissionalmente? <em style="color:rgba(197,147,49,0.7)">(0 = Nenhum | 10 = Muito alto)</em></label>
+      <div class="escala-wrapper">
+        <div class="escala-labels"><span>Nenhum interesse</span><span>Muito interesse</span></div>
+        <div class="escala-btns" data-name="q25_interesse">
+          <button type="button" class="escala-btn" data-val="0">0</button><button type="button" class="escala-btn" data-val="1">1</button><button type="button" class="escala-btn" data-val="2">2</button><button type="button" class="escala-btn" data-val="3">3</button><button type="button" class="escala-btn" data-val="4">4</button><button type="button" class="escala-btn" data-val="5">5</button><button type="button" class="escala-btn" data-val="6">6</button><button type="button" class="escala-btn" data-val="7">7</button><button type="button" class="escala-btn" data-val="8">8</button><button type="button" class="escala-btn" data-val="9">9</button><button type="button" class="escala-btn" data-val="10">10</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="questao-grupo">
+      <label class="questao-label"><span class="numero-q">26.</span> Você estaria disposto(a) a entrar mais cedo (às 8h) uma vez por semana para um treinamento rápido antes da abertura da loja?</label>
+      <div class="opcoes-lista">
+        <label class="opcao-item"><input type="radio" name="q26_horario" value="sim"> <label>Sim, sem problema</label></label>
+        <label class="opcao-item"><input type="radio" name="q26_horario" value="depende"> <label>Depende do conteúdo e frequência</label></label>
+        <label class="opcao-item"><input type="radio" name="q26_horario" value="dificuldade"> <label>Teria dificuldade, mas tentaria</label></label>
+        <label class="opcao-item"><input type="radio" name="q26_horario" value="nao"> <label>Não seria possível para mim</label></label>
+      </div>
+    </div>
+
+    <div class="questao-grupo">
+      <label class="questao-label"><span class="numero-q">27.</span> Qual formato de treinamento você prefere? (Marque todos que se aplicam)</label>
+      <div class="opcoes-lista opcoes-grid">
+        <label class="opcao-item"><input type="checkbox" name="q27_formato" value="pratico"> <label>Prático, com demonstração</label></label>
+        <label class="opcao-item"><input type="checkbox" name="q27_formato" value="aula"> <label>Aula com apresentação</label></label>
+        <label class="opcao-item"><input type="checkbox" name="q27_formato" value="individual"> <label>Acompanhamento individual</label></label>
+        <label class="opcao-item"><input type="checkbox" name="q27_formato" value="video"> <label>Vídeos curtos (WhatsApp/Youtube)</label></label>
+        <label class="opcao-item"><input type="checkbox" name="q27_formato" value="material"> <label>Material escrito / apostilas</label></label>
+        <label class="opcao-item"><input type="checkbox" name="q27_formato" value="roleplay"> <label>Simulação de atendimento (role-play)</label></label>
+      </div>
+    </div>
+
+    <div class="questao-grupo">
+      <label class="questao-label"><span class="numero-q">28.</span> Qual habilidade você mais gostaria de desenvolver nos próximos 3 meses?</label>
+      <textarea name="q28_desenvolver" rows="3" placeholder="Ex.: aprender mais sobre os produtos, fechar mais vendas, usar melhor o sistema..."></textarea>
+    </div>
+  </div>
+
+  <!-- ──────────────────────────────────────── -->
+  <!-- SEÇÃO 6 — PROCESSOS E FERRAMENTAS -->
+  <!-- ──────────────────────────────────────── -->
+  <div class="secao" id="s6">
+    <div class="secao-header">
+      <div class="secao-icon"><i class="fa-solid fa-gear"></i></div>
+      <div>
+        <div class="secao-numero">Seção 06</div>
+        <div class="secao-titulo">Processos, Ferramentas e Rotinas</div>
+      </div>
+    </div>
+
+    <div class="questao-grupo">
+      <label class="questao-label"><span class="numero-q">29.</span> Você tem clareza sobre o que é esperado de você no dia a dia?</label>
+      <div class="opcoes-lista">
+        <label class="opcao-item"><input type="radio" name="q29_clareza" value="total"> <label>Sim, tenho clareza total sobre minhas responsabilidades</label></label>
+        <label class="opcao-item"><input type="radio" name="q29_clareza" value="parcial"> <label>Parcialmente — algumas funções ainda são confusas</label></label>
+        <label class="opcao-item"><input type="radio" name="q29_clareza" value="nao"> <label>Não — muitas vezes fico em dúvida sobre o que devo fazer</label></label>
+      </div>
+    </div>
+
+    <div class="questao-grupo">
+      <label class="questao-label"><span class="numero-q">30.</span> Como você avalia o suporte que recebe para usar o sistema da loja (ERP)?</label>
+      <div class="opcoes-lista">
+        <label class="opcao-item"><input type="radio" name="q30_suporte_erp" value="excelente"> <label>Excelente — consigo ajuda quando preciso</label></label>
+        <label class="opcao-item"><input type="radio" name="q30_suporte_erp" value="bom"> <label>Bom — mas nem sempre consigo ajuda rápida</label></label>
+        <label class="opcao-item"><input type="radio" name="q30_suporte_erp" value="ruim"> <label>Ruim — geralmente fico sem suporte</label></label>
+        <label class="opcao-item"><input type="radio" name="q30_suporte_erp" value="nao_uso"> <label>Não utilizo o sistema diretamente</label></label>
+      </div>
+    </div>
+
+    <div class="questao-grupo">
+      <label class="questao-label"><span class="numero-q">31.</span> Você já cometeu ou viu um erro na operação (registro de venda, embalagem, nota fiscal) que poderia ter sido evitado com mais treinamento?</label>
+      <div class="opcoes-lista">
+        <label class="opcao-item"><input type="radio" name="q31_erro" value="sim_proprio"> <label>Sim, cometi um erro assim</label></label>
+        <label class="opcao-item"><input type="radio" name="q31_erro" value="sim_colega"> <label>Já vi colegas cometerem</label></label>
+        <label class="opcao-item"><input type="radio" name="q31_erro" value="ambos"> <label>Os dois — já cometi e já vi colegas</label></label>
+        <label class="opcao-item"><input type="radio" name="q31_erro" value="nao"> <label>Não me recordo de nenhum caso</label></label>
+      </div>
+    </div>
+
+    <div class="questao-grupo">
+      <label class="questao-label"><span class="numero-q">32.</span> Na sua opinião, qual processo da loja precisa de mais atenção e melhoria hoje?</label>
+      <textarea name="q32_processo_melhorar" rows="3" placeholder="Seja específico(a). Exemplo: registro de vendas, embalagem para marketplace, atendimento pós-venda..."></textarea>
+    </div>
+  </div>
+
+  <!-- ──────────────────────────────────────── -->
+  <!-- SEÇÃO 7 — SATISFAÇÃO E ENGAJAMENTO -->
+  <!-- ──────────────────────────────────────── -->
+  <div class="secao" id="s7">
+    <div class="secao-header">
+      <div class="secao-icon vermelha"><i class="fa-solid fa-fire-flame-curved"></i></div>
+      <div>
+        <div class="secao-numero">Seção 07</div>
+        <div class="secao-titulo">Satisfação e Engajamento</div>
+      </div>
+    </div>
+
+    <div class="questao-grupo">
+      <label class="questao-label"><span class="numero-q">33.</span> De 0 a 10, o quanto você se sente motivado(a) a dar o seu melhor no trabalho? <em style="color:rgba(197,147,49,0.7)">(0 = Desmotivado | 10 = Muito motivado)</em></label>
+      <div class="escala-wrapper">
+        <div class="escala-labels"><span>Desmotivado</span><span>Muito motivado</span></div>
+        <div class="escala-btns" data-name="q33_motivacao">
+          <button type="button" class="escala-btn" data-val="0">0</button><button type="button" class="escala-btn" data-val="1">1</button><button type="button" class="escala-btn" data-val="2">2</button><button type="button" class="escala-btn" data-val="3">3</button><button type="button" class="escala-btn" data-val="4">4</button><button type="button" class="escala-btn" data-val="5">5</button><button type="button" class="escala-btn" data-val="6">6</button><button type="button" class="escala-btn" data-val="7">7</button><button type="button" class="escala-btn" data-val="8">8</button><button type="button" class="escala-btn" data-val="9">9</button><button type="button" class="escala-btn" data-val="10">10</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="questao-grupo">
+      <label class="questao-label"><span class="numero-q">34.</span> O que mais te motiva a trabalhar nas Casas Goianita? (Marque até 3)</label>
+      <div class="opcoes-lista opcoes-grid">
+        <label class="opcao-item"><input type="checkbox" name="q34_motiva" value="salario"> <label>Salário / benefícios</label></label>
+        <label class="opcao-item"><input type="checkbox" name="q34_motiva" value="colegas"> <label>Relação com colegas</label></label>
+        <label class="opcao-item"><input type="checkbox" name="q34_motiva" value="crescimento"> <label>Oportunidade de crescimento</label></label>
+        <label class="opcao-item"><input type="checkbox" name="q34_motiva" value="produto"> <label>Orgulho do produto / marca</label></label>
+        <label class="opcao-item"><input type="checkbox" name="q34_motiva" value="cliente"> <label>Atender bem o cliente</label></label>
+        <label class="opcao-item"><input type="checkbox" name="q34_motiva" value="estabilidade"> <label>Estabilidade no emprego</label></label>
+        <label class="opcao-item"><input type="checkbox" name="q34_motiva" value="desafio"> <label>Desafio e variedade das tarefas</label></label>
+        <label class="opcao-item"><input type="checkbox" name="q34_motiva" value="reconhecimento"> <label>Reconhecimento pelo trabalho</label></label>
+      </div>
+    </div>
+
+    <div class="questao-grupo">
+      <label class="questao-label"><span class="numero-q">35.</span> De 0 a 10, qual é a probabilidade de você recomendar as Casas Goianita como um bom lugar para trabalhar? <em style="color:rgba(197,147,49,0.7)">(NPS de colaboradores)</em></label>
+      <div class="escala-wrapper">
+        <div class="escala-labels"><span>Jamais recomendaria</span><span>Recomendaria com certeza</span></div>
+        <div class="escala-btns" data-name="q35_nps">
+          <button type="button" class="escala-btn" data-val="0">0</button><button type="button" class="escala-btn" data-val="1">1</button><button type="button" class="escala-btn" data-val="2">2</button><button type="button" class="escala-btn" data-val="3">3</button><button type="button" class="escala-btn" data-val="4">4</button><button type="button" class="escala-btn" data-val="5">5</button><button type="button" class="escala-btn" data-val="6">6</button><button type="button" class="escala-btn" data-val="7">7</button><button type="button" class="escala-btn" data-val="8">8</button><button type="button" class="escala-btn" data-val="9">9</button><button type="button" class="escala-btn" data-val="10">10</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──────────────────────────────────────── -->
+  <!-- SEÇÃO 8 — SUGESTÕES LIVRES -->
+  <!-- ──────────────────────────────────────── -->
+  <div class="secao" id="s8">
+    <div class="secao-header">
+      <div class="secao-icon verde"><i class="fa-solid fa-lightbulb"></i></div>
+      <div>
+        <div class="secao-numero">Seção 08</div>
+        <div class="secao-titulo">Sugestões e Espaço Livre</div>
+      </div>
+    </div>
+
+    <div class="questao-grupo">
+      <label class="questao-label"><span class="numero-q">36.</span> O que você acredita que mudaria significativamente o dia a dia da loja para melhor?</label>
+      <textarea name="q36_mudanca" rows="4" placeholder="Sua sugestão, por menor que pareça, pode fazer grande diferença..."></textarea>
+    </div>
+
+    <div class="questao-grupo">
+      <label class="questao-label"><span class="numero-q">37.</span> Há algo que acontece na loja que te incomoda e que gostaria que fosse diferente? (Processos, atitudes, organização...)</label>
+      <textarea name="q37_incomoda" rows="4" placeholder="Lembre-se: esta pesquisa é anônima."></textarea>
+    </div>
+
+    <div class="questao-grupo">
+      <label class="questao-label"><span class="numero-q">38.</span> Há alguma habilidade ou conhecimento que você tem e que acha que a empresa não aproveita suficientemente?</label>
+      <textarea name="q38_habilidade_nao_aproveitada" rows="3" placeholder="Ex.: sei fazer planilhas, tenho experiência com redes sociais, falo inglês..."></textarea>
+    </div>
+
+    <div class="questao-grupo">
+      <label class="questao-label"><span class="numero-q">39.</span> Deixe qualquer outro comentário, crítica ou sugestão que queira compartilhar:</label>
+      <textarea name="q39_livre" rows="5" placeholder="Use o espaço à vontade..."></textarea>
+    </div>
+  </div>
+
+  <!-- BOTÃO ENVIAR -->
+  <div class="btn-enviar-wrapper">
+    <button class="btn-enviar" type="button" onclick="enviarPesquisa()">
+      <i class="fa-solid fa-paper-plane"></i>
+      Enviar Pesquisa
+    </button>
+  </div>
+
+  <!-- TELA DE OBRIGADO -->
+  <div class="obrigado-screen" id="obrigadoScreen">
+    <div class="obrigado-icon"><i class="fa-solid fa-check"></i></div>
+    <h2>Muito obrigado!</h2>
+    <p>Suas respostas foram registradas com sucesso. Elas serão analisadas de forma anônima para construir um programa de treinamento feito para você e para toda a equipe.</p>
+    <div class="art-deco-line" style="margin-top:1.5rem;max-width:200px;margin-left:auto;margin-right:auto;"><i class="fa-solid fa-diamond"></i></div>
+    <p style="margin-top:1rem;font-size:0.82rem;color:rgba(210,197,177,0.4);">Casas Goianita — Investindo nas pessoas que fazem a diferença</p>
+  </div>
+
+</div><!-- /form-container -->
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <p>Casas Goianita · Pesquisa de Clima e Capacitação 2026 · Todas as respostas são anônimas e confidenciais</p>
+</footer>
+
+<script>
+  // ── TABELA DE LIDERANÇA ──
+  const criteriosLideranca = [
+    { id: 'lid_clareza', label: 'Comunica claramente o que espera de mim' },
+    { id: 'lid_feedback', label: 'Fornece feedbacks construtivos e regulares' },
+    { id: 'lid_respeito', label: 'Trata todos com respeito e imparcialidade' },
+    { id: 'lid_apoio', label: 'Apoia quando tenho dificuldades no trabalho' },
+    { id: 'lid_exemplo', label: 'Dá o exemplo — faz o que prega' },
+    { id: 'lid_organi', label: 'Organiza bem as tarefas e prioridades da equipe' },
+    { id: 'lid_reconhece', label: 'Reconhece e valoriza o bom trabalho' },
+    { id: 'lid_abertura', label: 'Está aberto(a) a sugestões e críticas' },
+  ];
+
+  const tbody = document.getElementById('tabelaLideranca');
+  criteriosLideranca.forEach((c, idx) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="criterio-col"><span style="color:var(--dourado);margin-right:0.35rem">${10+idx}.</span>${c.label}</td>
+      ${[1,2,3,4,5].map(n => `
+        <td class="nota-col">
+          <div class="radio-nota">
+            <button type="button" class="radio-nota-btn" data-group="${c.id}" data-val="${n}">${n}</button>
+          </div>
+        </td>
+      `).join('')}
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // ── ESCALA BUTTONS ──
+  document.querySelectorAll('.escala-btns').forEach(container => {
+    container.querySelectorAll('.escala-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        container.querySelectorAll('.escala-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        updateProgress();
+      });
+    });
+  });
+
+  // ── RADIO NOTA (LIDERANÇA) ──
+  document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('radio-nota-btn')) {
+      const group = e.target.dataset.group;
+      document.querySelectorAll(`.radio-nota-btn[data-group="${group}"]`).forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      updateProgress();
+    }
+  });
+
+  // ── RÁDIOS / CHECKBOXES — atualizam progresso ──
+  document.querySelectorAll('input[type="radio"], input[type="checkbox"], textarea').forEach(el => {
+    el.addEventListener('change', updateProgress);
+    el.addEventListener('input', updateProgress);
+  });
+
+  // ── PROGRESSO ──
+  function updateProgress() {
+    const totalSecoes = 8;
+    const secoes = document.querySelectorAll('.secao');
+    let preenchidas = 0;
+
+    secoes.forEach(s => {
+      const escalaAtiva = s.querySelector('.escala-btn.active');
+      const radioAtivo = s.querySelector('input[type="radio"]:checked');
+      const checkAtivo = s.querySelector('input[type="checkbox"]:checked');
+      const lidAtivo = s.querySelector('.radio-nota-btn.active');
+      const textoPreench = [...s.querySelectorAll('textarea')].some(t => t.value.trim().length > 3);
+      if (escalaAtiva || radioAtivo || checkAtivo || lidAtivo || textoPreench) preenchidas++;
+    });
+
+    const pct = Math.round((preenchidas / totalSecoes) * 100);
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressPct').textContent = pct + '%';
+  }
+
+  // ── SCROLL ANIMATIONS ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('.secao').forEach(el => observer.observe(el));
+
+  // ── COLETAR DADOS DO FORMULÁRIO ──
+  function coletarDados() {
+    const dados = {};
+
+    // Escalas
+    document.querySelectorAll('.escala-btns').forEach(c => {
+      const ativo = c.querySelector('.escala-btn.active');
+      dados[c.dataset.name] = ativo ? parseInt(ativo.dataset.val) : null;
+    });
+
+    // Rádios
+    document.querySelectorAll('input[type="radio"]:checked').forEach(r => {
+      dados[r.name] = r.value;
+    });
+
+    // Checkboxes
+    const cbGroups = {};
+    document.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
+      if (!cbGroups[cb.name]) cbGroups[cb.name] = [];
+      cbGroups[cb.name].push(cb.value);
+    });
+    Object.assign(dados, cbGroups);
+
+    // Textareas
+    document.querySelectorAll('textarea').forEach(ta => {
+      if (ta.name && ta.value.trim()) dados[ta.name] = ta.value.trim();
+    });
+
+    // Liderança (tabela de notas)
+    document.querySelectorAll('.radio-nota-btn.active').forEach(b => {
+      dados[b.dataset.group] = parseInt(b.dataset.val);
+    });
+
+    return dados;
+  }
+
+  // ── ENVIAR ──
+  async function enviarPesquisa() {
+    const btn = document.querySelector('.btn-enviar');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando...';
+
+    const dados = coletarDados();
+
+    try {
+      if (typeof window.salvarNoFirestore === 'function') {
+        const docId = await window.salvarNoFirestore(dados);
+        console.log('Resposta salva no Firestore. ID:', docId);
+      } else {
+        // Firebase ainda carregando — salva localmente como fallback
+        console.warn('Firebase não disponível. Dados locais:', JSON.stringify(dados, null, 2));
+      }
+
+      // Mostrar tela de obrigado
+      document.getElementById('formContainer').style.display = 'none';
+      document.getElementById('obrigadoScreen').classList.add('visible');
+      document.getElementById('progressFill').style.width = '100%';
+      document.getElementById('progressPct').textContent = '100%';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    } catch (erro) {
+      console.error('Erro ao enviar:', erro);
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar Pesquisa';
+      alert('Erro ao enviar a pesquisa. Verifique sua conexão e tente novamente.');
+    }
+  }
+</script>
+
+</body>
+</html>
