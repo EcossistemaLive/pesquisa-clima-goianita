@@ -31,6 +31,10 @@
       });
       return docRef.id;
     };
+
+    // Sinaliza que o Firebase está pronto
+    window._firebaseReady = true;
+    document.dispatchEvent(new Event('firebase-ready'));
   </script>
   <style>
     :root {
@@ -1161,6 +1165,12 @@
     return dados;
   }
 
+  // Aguarda o Firebase ficar pronto (resolve imediatamente se já carregou)
+  function aguardarFirebase() {
+    if (window._firebaseReady) return Promise.resolve();
+    return new Promise(resolve => document.addEventListener('firebase-ready', resolve, { once: true }));
+  }
+
   // ── ENVIAR ──
   async function enviarPesquisa() {
     const btn = document.querySelector('.btn-enviar');
@@ -1170,13 +1180,9 @@
     const dados = coletarDados();
 
     try {
-      if (typeof window.salvarNoFirestore === 'function') {
-        const docId = await window.salvarNoFirestore(dados);
-        console.log('Resposta salva no Firestore. ID:', docId);
-      } else {
-        // Firebase ainda carregando — salva localmente como fallback
-        console.warn('Firebase não disponível. Dados locais:', JSON.stringify(dados, null, 2));
-      }
+      await aguardarFirebase();
+      const docId = await window.salvarNoFirestore(dados);
+      console.log('Resposta salva no Firestore. ID:', docId);
 
       // Mostrar tela de obrigado
       document.getElementById('formContainer').style.display = 'none';
